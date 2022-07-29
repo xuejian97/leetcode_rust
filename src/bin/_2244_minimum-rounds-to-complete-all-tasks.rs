@@ -36,32 +36,31 @@ impl Solution {
     pub fn minimum_rounds(mut tasks: Vec<i32>) -> i32 {
         tasks.sort_unstable();
         let mut level_counts = vec![];
-        let mut c_x = -1;
-        let mut last_index = 0;
-        for (idx, &x) in tasks.iter().enumerate() {
-            if c_x != x {
-                c_x = x;
-                let count = idx as i32 - last_index;
-                level_counts.push(count);
-                last_index = idx as i32;
-            } else {
-                continue;
+        {
+            let mut c_x = -1;
+            let mut last_index = 0;
+            for (idx, &x) in tasks.iter().enumerate() {
+                if c_x != x {
+                    c_x = x;
+                    let count = idx as i32 - last_index;
+                    level_counts.push(count);
+                    last_index = idx as i32;
+                } else {
+                    continue;
+                }
             }
+            level_counts.push(tasks.len() as i32 - last_index);
+            if level_counts.contains(&1) { return -1; }
+            level_counts.remove(0);
         }
-        level_counts.push(tasks.len() as i32 - last_index);
-        if level_counts.contains(&1) { return -1 }
-        level_counts.remove(0);
 
-        // 除了 1 其他所有正数都可以由2、3组成
         level_counts.iter().map(|&count| {
-            let mut level_2_count = 0;
-            let mut left_count = count;
-            while left_count % 3 != 0 {
-                left_count -= 2;
-                level_2_count += 1;
+            match count % 3 {
+                0 => { count / 3 }
+                1 => { count / 3 - 1 + 2 }
+                2 => { count / 3 + 1 }
+                _ => { -1 }
             }
-
-            level_2_count + left_count / 3
         }).sum()
     }
 }
@@ -72,5 +71,6 @@ fn main() {
     let i = Solution::minimum_rounds(vec![2, 2, 3, 3, 2, 4, 4, 4, 4, 4]);
     // let i = Solution::minimum_rounds(vec![2, 3, 3]);
     // let i = Solution::minimum_rounds(vec![1, 2, 1]);
+
     println!("{}", i);
 }
