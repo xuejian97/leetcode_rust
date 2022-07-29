@@ -33,20 +33,29 @@ Constraints:
  */
 
 impl Solution {
-    // TODO slow
-    pub fn minimum_rounds(tasks: Vec<i32>) -> i32 {
-        let mut map = std::collections::HashMap::new();
-        tasks.iter().for_each(|&i| {
-            match map.get_mut(&i) {
-                Some(&mut count) => { map.insert(i, count + 1); }
-                None => { map.insert(i, 1); }
-            };
-        });
+    pub fn minimum_rounds(mut tasks: Vec<i32>) -> i32 {
+        tasks.sort_unstable();
+        let mut level_count = vec![];
+        let mut c_x = -1;
+        let mut last_index = 0;
+        for (idx, &x) in tasks.iter().enumerate() {
+            if c_x != x {
+                c_x = x;
+                let count = idx as i32 - last_index;
+                level_count.push(count);
+                last_index = idx as i32;
+            } else {
+                continue;
+            }
+        }
+        level_count.push(tasks.len() as i32 - last_index);
+        if level_count.contains(&1) { return -1 }
+        level_count.remove(0);
 
         let resolve_type: Vec<i32> = vec![2, 3];
         // f[x] = min{f[x-2] + 1, f[x-3] + 1}
         // f[0] = 0
-        let count_list = map.iter().map(|(_, &count)| {
+        level_count.iter().map(|&count| {
             let m = count as usize;
             let mut dp = vec![-1; m + 1];
             dp[0] = 0;
@@ -62,13 +71,7 @@ impl Solution {
                 dp[i] = if min == i32::MAX { -1 } else { min + 1 }
             }
             dp[m]
-        }).collect::<Vec<_>>();
-
-        if count_list.contains(&-1) {
-            -1
-        } else {
-            count_list.iter().sum()
-        }
+        }).sum()
     }
 }
 
@@ -76,6 +79,7 @@ struct Solution;
 
 fn main() {
     // let i = Solution::minimum_rounds(vec![2, 2, 3, 3, 2, 4, 4, 4, 4, 4]);
-    let i = Solution::minimum_rounds(vec![2, 3, 3]);
+    // let i = Solution::minimum_rounds(vec![2, 3, 3]);
+    let i = Solution::minimum_rounds(vec![1, 2, 1]);
     println!("{}", i);
 }
