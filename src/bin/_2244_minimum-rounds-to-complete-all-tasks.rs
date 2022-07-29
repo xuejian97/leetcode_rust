@@ -35,42 +35,33 @@ Constraints:
 impl Solution {
     pub fn minimum_rounds(mut tasks: Vec<i32>) -> i32 {
         tasks.sort_unstable();
-        let mut level_count = vec![];
+        let mut level_counts = vec![];
         let mut c_x = -1;
         let mut last_index = 0;
         for (idx, &x) in tasks.iter().enumerate() {
             if c_x != x {
                 c_x = x;
                 let count = idx as i32 - last_index;
-                level_count.push(count);
+                level_counts.push(count);
                 last_index = idx as i32;
             } else {
                 continue;
             }
         }
-        level_count.push(tasks.len() as i32 - last_index);
-        if level_count.contains(&1) { return -1 }
-        level_count.remove(0);
+        level_counts.push(tasks.len() as i32 - last_index);
+        if level_counts.contains(&1) { return -1 }
+        level_counts.remove(0);
 
-        let resolve_type: Vec<i32> = vec![2, 3];
-        // f[x] = min{f[x-2] + 1, f[x-3] + 1}
-        // f[0] = 0
-        level_count.iter().map(|&count| {
-            let m = count as usize;
-            let mut dp = vec![-1; m + 1];
-            dp[0] = 0;
-            for i in 1..=m {
-                let mut min = i32::MAX;
-                for &rc in &resolve_type {
-                    if rc > i as i32 { break; }
-                    if dp[i - rc as usize] != -1 {
-                        min = i32::min(min, dp[i - rc as usize]);
-                    }
-                }
-
-                dp[i] = if min == i32::MAX { -1 } else { min + 1 }
+        // 除了 1 其他所有正数都可以由2、3组成
+        level_counts.iter().map(|&count| {
+            let mut level_2_count = 0;
+            let mut left_count = count;
+            while left_count % 3 != 0 {
+                left_count -= 2;
+                level_2_count += 1;
             }
-            dp[m]
+
+            level_2_count + left_count / 3
         }).sum()
     }
 }
@@ -78,8 +69,8 @@ impl Solution {
 struct Solution;
 
 fn main() {
-    // let i = Solution::minimum_rounds(vec![2, 2, 3, 3, 2, 4, 4, 4, 4, 4]);
+    let i = Solution::minimum_rounds(vec![2, 2, 3, 3, 2, 4, 4, 4, 4, 4]);
     // let i = Solution::minimum_rounds(vec![2, 3, 3]);
-    let i = Solution::minimum_rounds(vec![1, 2, 1]);
+    // let i = Solution::minimum_rounds(vec![1, 2, 1]);
     println!("{}", i);
 }
