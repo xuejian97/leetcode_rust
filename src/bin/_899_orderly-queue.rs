@@ -35,16 +35,22 @@ impl Solution {
     pub fn orderly_queue(s: String, k: i32) -> String {
         match k {
             1 => {
-                let mut x: Vec<String> = vec![];
+                let mut x: String = "".to_owned();
                 for i in 0..s.len() {
                     let mut str = s[i..s.len()].to_owned();
                     str.push_str(&s[0..i]);
-                    x.push(str)
+                    if x == "" {
+                        x = str;
+                    } else {
+                        match str.cmp(&x) {
+                            std::cmp::Ordering::Less => {
+                                x = str
+                            }
+                            _ => {}
+                        }
+                    }
                 }
-                x.sort_by(|a, b| {
-                    a.cmp(&b)
-                });
-                x[0].to_owned()
+                x
             }
             _ => {
                 let mut x: Vec<&str> = s
@@ -63,12 +69,13 @@ impl Solution {
 struct Solution;
 
 fn main() {
-    // let s = String::from("cba");
-    // let k = 1;
-    let s = String::from("baaca");
-    let k = 3;
+    let s = String::from("cba");
+    let k = 1;
+    // let s = String::from("baaca");
+    // let k = 3;
 
     let string = Solution::orderly_queue(s, k);
     println!("{}", string);
+
 
 }
