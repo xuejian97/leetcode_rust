@@ -55,7 +55,7 @@ impl Solution {
             words.pop();
         }
         let mut res;
-        let mut tail_spaces_length;
+        let tail_spaces_length;
         if words.len() > 1 {
             let separator = vec![" "; space_cnt / (words.len() - 1)].join("");
             res = words.join(&separator);
