@@ -30,7 +30,7 @@ Constraints:
 command consists of "G", "()", and/or "(al)" in some order.
  */
 impl Solution {
-    pub fn interpret(mut command: String) -> String {
+    pub fn interpret(command: String) -> String {
         command.replace("(al)", "al").replace("()","o")
     }
 }
