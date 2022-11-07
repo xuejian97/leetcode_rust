@@ -40,7 +40,6 @@ impl Solution {
             if !Solution::valid(left) || !Solution::valid(right) { continue; }
             let left_vec = Solution::legal_vec(left);
             let right_vec = Solution::legal_vec(right);
-            println!("lv: {:?}, rv: {:?}", left_vec, right_vec);
             for l in &left_vec {
                 for r in &right_vec {
                     ans.push(format!("({}, {})", l, r));
